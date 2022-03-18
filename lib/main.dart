@@ -1,5 +1,5 @@
 
-import 'package:bloc_cubit/cubit/weather_cubit.dart';
+import 'package:bloc_cubit/bloc/weather_bloc.dart';
 import 'package:bloc_cubit/weather_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: BlocProvider(
-        create: (context) => WeatherCubit(FakeWeatherRepository()),
+        create: (context) => WeatherBloc(FakeWeatherRepository()),
         child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
@@ -33,19 +33,29 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: BlocBuilder<WeatherCubit, WeatherState>(
+        child: BlocBuilder<WeatherBloc, WeatherState>(
           builder: (context, state) {
 
             if (state is WeatherInitial){
               return const Text("Push Button");
             } else if (state is WeatherLoading){
-              return const CircularProgressIndicator();
+              return const SizedBox(child: CircularProgressIndicator(),height: 100.0,width: 100.0,);
             } else if (state is WeatherLoaded){
-              return Text("In City ${state.weather.cityName} is right now ${state.weather.temperatureCelsius} \u2103",
-              overflow: TextOverflow.visible,
-              style: const TextStyle(fontSize: 17.0),);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text("In City ' ${state.weather.cityName} ' is right now ${state.weather.temperatureCelsius.toStringAsFixed(2)} \u2103",
+                overflow: TextOverflow.visible,
+                style: const TextStyle(fontSize: 25.0),
+                textAlign: TextAlign.center,),
+              );
             } else if (state is WeatherError){
-              return Text(state.message);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text(state.message,
+                overflow: TextOverflow.visible,
+                style: const TextStyle(fontSize: 24.0),
+                textAlign: TextAlign.center,),
+              );
             }else {
               return const Text('null');
             }
@@ -54,7 +64,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          BlocProvider.of<WeatherCubit>(context).getWeather();
+          BlocProvider.of<WeatherBloc>(context).add(GetWetherEvent());
         },
         tooltip: 'New request',
         child: const Icon(Icons.refresh_sharp),
