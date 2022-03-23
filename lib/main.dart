@@ -64,7 +64,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          BlocProvider.of<WeatherBloc>(context).add(GetWetherEvent());
+          BlocProvider.of<WeatherBloc>(context).add(const GetWetherEvent("Tor"));
         },
         tooltip: 'New request',
         child: const Icon(Icons.refresh_sharp),
